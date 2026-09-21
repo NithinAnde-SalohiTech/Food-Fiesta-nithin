@@ -3,6 +3,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,6 +17,10 @@ public class Product
 	private String pname;
 	private double pprice;
 	private String pdescription;
+
+	@ManyToOne
+	@JoinColumn(name = "restaurant_id")
+	private Restaurant restaurant;
 
 	public int getPid() {
 		return pid;
@@ -39,6 +45,12 @@ public class Product
 	}
 	public void setPdescription(String pdescription) {
 		this.pdescription = pdescription;
+	}
+	public Restaurant getRestaurant() {
+		return restaurant;
+	}
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
 	}
 	@Override
 	public String toString() {
