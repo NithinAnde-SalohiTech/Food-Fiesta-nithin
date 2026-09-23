@@ -89,7 +89,7 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-                sshagent(['EC2-SSH-CREDENTIAL']) {
+                sshagent(['APP_EC2_SSH']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@${APP_EC2_IP} '
                             docker pull ${DOCKER_IMAGE}
