@@ -60,29 +60,27 @@ pipeline {
                 '''
             }
         }
-
-        stage('Docker Push') {
-            steps {
-                withCredentials([
-                    string(
-                        credentialsId: 'DOCKER_ID',
-                        variable: 'DOCKER_PASSWORD'
-                    )
-                ]) {
-                    sh '''
-                        echo "$DOCKER_PASSWORD" | docker login \
-                            -u "nithinandedocker" \
-                            --password-stdin
-
-                        docker push nithinandedocker/food:latest
-                    '''
-                }
-            }
-        }
-
         stage('Deploy to EC2') {
             steps {
-                withCredentials([
+                withCredentials([stage('Docker Push') {
+    steps {
+        withCredentials([
+            usernamePassword(
+                credentialsId: 'DOCKER_ID',
+                usernameVariable: 'DOCKER_USERNAME',
+                passwordVariable: 'DOCKER_PASSWORD'
+            )
+        ]) {
+            sh '''
+                echo "$DOCKER_PASSWORD" | docker login \
+                    -u "$DOCKER_USERNAME" \
+                    --password-stdin
+
+                docker push nithinandedocker/food:latest
+            '''
+        }
+    }
+}
                     sshUserPrivateKey(
                         credentialsId: 'APP_EC2_SSH',
                         keyFileVariable: 'SSH_KEY',
