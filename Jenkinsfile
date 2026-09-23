@@ -2,15 +2,7 @@ pipeline {
     agent any
 
     environment {
-        APP_EC2_IP = '13.201.98.44'
-
-        DOCKER_IMAGE = 'nithinandedocker/food:latest'
-
-        SONAR_PROJECT_KEY = 'nithinande-salohitech'
-        SONAR_ORG = 'nithinande-salohitech'
-
-        DOCKER_CREDENTIALS = 'DOCKER_ID'
-        SONAR_CREDENTIALS = 'SONAR_ID'
+        APP_EC2_IP = '172.31.10.254'
     }
 
     tools {
@@ -22,105 +14,97 @@ pipeline {
 
         stage('Git Checkout') {
             steps {
-                git(
-                    url: 'https://github.com/NithinAnde-SalohiTech/Food-Fiesta-nithin.git',
+                git url: 'https://github.com/NithinAnde-SalohiTech/Food-Fiesta-nithin.git',
                     branch: 'main'
-                )
-            }
-        }
-        stage('SonarQube Analysis') {
-            steps {
-                withCredentials([
-                    string(
-                        credentialsId: "${SONAR_CREDENTIALS}",
-                        variable: 'SONAR_TOKEN'
-                    )
-                ]) {
-                    sh '''
-                        mvn org.sonarsource.scanner.maven:sonar-maven-plugin:5.6.0.6792:sonar \
-                        -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                        -Dsonar.organization=${SONAR_ORG} \
-                        -Dsonar.host.url=https://sonarcloud.io \
-                        -Dsonar.token=${SONAR_TOKEN}
-                    '''
-                }
             }
         }
 
-        stage('Package') {
+        stage('Validate') {
+            steps {
+                sh 'mvn validate'
+            }
+        }
+
+        stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Sonar Scan') {
             steps {
-                sh """
-                    docker build -t ${DOCKER_IMAGE} .
-                """
+                withCredentials([
+                    string(
+                        credentialsId: 'SONAR_ID',
+                        variable: 'SONAR_TOKEN'
+                    )
+                ]) {
+                    withSonarQubeEnv('sonarqube') {
+                        sh '''
+                            mvn org.sonarsource.scanner.maven:sonar-maven-plugin:5.6.0.6792:sonar \
+                                -Dsonar.projectKey=nithinande-salohitech \
+                                -Dsonar.organization=nithinande-salohitech \
+                                -Dsonar.host.url=https://sonarcloud.io \
+                                -Dsonar.token=$SONAR_TOKEN
+                        '''
+                    }
+                }
             }
         }
 
-        stage('Docker Login') {
+        stage('Docker Build') {
+            steps {
+                sh '''
+                    docker build \
+                        -t nithinandedocker/food:latest .
+                '''
+            }
+        }
+
+        stage('Docker Push') {
             steps {
                 withCredentials([
-                    usernamePassword(
-                        credentialsId: "${DOCKER_CREDENTIALS}",
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
+                    string(
+                        credentialsId: 'DOCKER_ID',
+                        variable: 'DOCKER_PASSWORD'
                     )
                 ]) {
                     sh '''
                         echo "$DOCKER_PASSWORD" | docker login \
-                        -u "$DOCKER_USERNAME" \
-                        --password-stdin
+                            -u "nithinandedocker" \
+                            --password-stdin
+
+                        docker push nithinandedocker/food:latest
                     '''
                 }
             }
         }
 
-        stage('Push Docker Image') {
-            steps {
-                sh """
-                    docker push ${DOCKER_IMAGE}
-                """
-            }
-        }
         stage('Deploy to EC2') {
             steps {
-                sshagent(['APP_EC2_SSH']) {
-                    sh """
-                            ssh -o StrictHostKeyChecking=no ubuntu@${APP_EC2_IP} '
-                            docker pull ${DOCKER_IMAGE}
-
-                            docker stop myapp || true
-                            docker rm myapp || true
-
-                            docker run -d \\
-                                --name myapp \\
-                                -p 8085:8085 \\
-                                ${DOCKER_IMAGE}
-
-                            docker ps
-                        '
-                    """
+                withCredentials([
+                    sshUserPrivateKey(
+                        credentialsId: 'APP_EC2_SSH',
+                        keyFileVariable: 'SSH_KEY',
+                        usernameVariable: 'SSH_USER'
+                    )
+                ]) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no \
+                            -i "$SSH_KEY" \
+                            "$SSH_USER@$APP_EC2_IP" \
+                            "
+                                docker pull nithinandedocker/food:latest &&
+                                docker stop food || true &&
+                                docker rm food || true &&
+                                docker run -d \
+                                    --name food \
+                                    -p 8085:8085 \
+                                    nithinandedocker/food:latest
+                            "
+                    '''
                 }
             }
-        }
-    }
-
-    post {
-
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-
-        failure {
-            echo 'Pipeline failed. Check the Jenkins console output.'
-        }
-
-        always {
-            sh 'docker logout || true'
         }
     }
 }
