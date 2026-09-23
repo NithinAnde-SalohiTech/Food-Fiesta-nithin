@@ -4,6 +4,10 @@ pipeline {
     environment {
         APP_EC2_IP = '172.31.10.254'
         DOCKER_IMAGE = 'nithinandedocker/food:latest'
+
+        // PostgreSQL running on the EC2 host
+        DB_HOST = 'host.docker.internal'
+        DB_PORT = '5432'
     }
 
     tools {
@@ -97,14 +101,31 @@ pipeline {
                             "$SSH_USER@$APP_EC2_IP" \
                             "
                                 docker pull ${DOCKER_IMAGE};
+
                                 docker stop food || true;
                                 docker rm food || true;
-                                docker run -d --name food -p 8085:8085 ${DOCKER_IMAGE};
-                                docker ps
+
+                                docker run -d \
+                                    --name food \
+                                    --add-host=host.docker.internal:host-gateway \
+                                    -p 8085:8080 \
+                                    ${DOCKER_IMAGE};
+
+                                docker ps;
                             "
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Food Fiesta application deployed successfully.'
+        }
+
+        failure {
+            echo 'Pipeline failed. Check the failed stage logs.'
         }
     }
 }
