@@ -9,7 +9,7 @@ pipeline {
         SONAR_PROJECT_KEY = 'nithinande-salohitech'
         SONAR_ORG = 'nithinande-salohitech'
 
-        DOCKER_CREDENTIALS = 'dockerhub-credentials'
+        DOCKER_CREDENTIALS = 'DOCKER_ID'
         SONAR_CREDENTIALS = 'SONAR_ID'
     }
 
