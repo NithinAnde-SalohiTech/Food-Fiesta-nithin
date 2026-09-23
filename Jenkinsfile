@@ -86,20 +86,19 @@ pipeline {
                 """
             }
         }
-
         stage('Deploy to EC2') {
             steps {
                 sshagent(['APP_EC2_SSH']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@${APP_EC2_IP} '
+                            ssh -o StrictHostKeyChecking=no ubuntu@${APP_EC2_IP} '
                             docker pull ${DOCKER_IMAGE}
 
                             docker stop myapp || true
                             docker rm myapp || true
 
-                            docker run -d \
-                                --name myapp \
-                                -p 8085:8085 \
+                            docker run -d \\
+                                --name myapp \\
+                                -p 8085:8085 \\
                                 ${DOCKER_IMAGE}
 
                             docker ps
