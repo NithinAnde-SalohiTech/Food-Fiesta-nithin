@@ -26,6 +26,6 @@ RUN chmod +x entrypoint.sh
 
 USER spring:spring
 
-EXPOSE 8080
+EXPOSE 8085
 
 ENTRYPOINT ["./entrypoint.sh"]
