@@ -99,7 +99,7 @@ pipeline {
 
                             docker run -d \
                                 --name myapp \
-                                -p 8080:8080 \
+                                -p 8085:8085 \
                                 ${DOCKER_IMAGE}
 
                             docker ps
