@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         APP_EC2_IP = '172.31.10.254'
+        DOCKER_IMAGE = 'nithinandedocker/food:latest'
     }
 
     tools {
@@ -56,31 +57,34 @@ pipeline {
             steps {
                 sh '''
                     docker build \
-                        -t nithinandedocker/food:latest .
+                        -t ${DOCKER_IMAGE} .
                 '''
             }
         }
+
+        stage('Docker Push') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'DOCKER_ID',
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASSWORD" | docker login \
+                            -u "$DOCKER_USERNAME" \
+                            --password-stdin
+
+                        docker push ${DOCKER_IMAGE}
+                    '''
+                }
+            }
+        }
+
         stage('Deploy to EC2') {
             steps {
-                withCredentials([stage('Docker Push') {
-    steps {
-        withCredentials([
-            usernamePassword(
-                credentialsId: 'DOCKER_ID',
-                usernameVariable: 'DOCKER_USERNAME',
-                passwordVariable: 'DOCKER_PASSWORD'
-            )
-        ]) {
-            sh '''
-                echo "$DOCKER_PASSWORD" | docker login \
-                    -u "$DOCKER_USERNAME" \
-                    --password-stdin
-
-                docker push nithinandedocker/food:latest
-            '''
-        }
-    }
-}
+                withCredentials([
                     sshUserPrivateKey(
                         credentialsId: 'APP_EC2_SSH',
                         keyFileVariable: 'SSH_KEY',
@@ -92,13 +96,11 @@ pipeline {
                             -i "$SSH_KEY" \
                             "$SSH_USER@$APP_EC2_IP" \
                             "
-                                docker pull nithinandedocker/food:latest &&
-                                docker stop food || true &&
-                                docker rm food || true &&
-                                docker run -d \
-                                    --name food \
-                                    -p 8085:8085 \
-                                    nithinandedocker/food:latest
+                                docker pull ${DOCKER_IMAGE};
+                                docker stop food || true;
+                                docker rm food || true;
+                                docker run -d --name food -p 8085:8085 ${DOCKER_IMAGE};
+                                docker ps
                             "
                     '''
                 }
