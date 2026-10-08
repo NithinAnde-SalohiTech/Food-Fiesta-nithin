@@ -8,7 +8,7 @@ COPY target/*.jar app.jar
 
 RUN chown spring:spring app.jar
 
-USER spring:spring
+USER spring
 
 EXPOSE 8080
 
