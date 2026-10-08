@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Food Fiesta</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/BuyProduct.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="/home" class="sidebar-logo">
+                <i class="fa-solid fa-fire-burner"></i> Food Fiesta
+            </a>
+            <nav class="sidebar-nav">
+                <a href="/home" class="sidebar-link">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+                <a href="/products" class="sidebar-link active">
+                    <i class="fa-solid fa-cart-shopping"></i> Shop Now
+                </a>
+                <a href="/about" class="sidebar-link">
+                    <i class="fa-solid fa-circle-info"></i> Our Story
+                </a>
+                <div class="sidebar-footer">
+                    <a href="/logout" class="btn btn-outline" style="width: 100%; color: var(--primary); border-color: var(--primary-light);">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header animate-up">
+                <h1>Welcome Back, <span th:text="${name}" style="color: var(--primary);">User</span>!</h1>
+                <p>Ready for another delicious meal?</p>
+            </header>
+
+            <!-- Search Section -->
+            <div class="search-card animate-up" style="animation-delay: 0.05s;">
+                <form th:action="@{/product/search}" method="post">
+                    <h3>Find a Dish</h3>
+                    <div class="search-group">
+                        <input type="text" name="productName" class="input-field" placeholder="Search for Biryani, Pasta, Dessert..." required>
+                        <button type="submit" class="btn btn-primary" style="white-space: nowrap;">Search Menu</button>
+                    </div>
+                    <p th:if="${message}" th:text="${message}" style="color: var(--primary); margin-top: 12px; font-size: 0.875rem; font-weight: 600;"></p>
+                </form>
+            </div>
+
+            <!-- Order Placing Section (Result) -->
+            <div th:if="${product!=null}" class="animate-up" style="animation-delay: 0.1s;">
+                <h3 style="margin-bottom: 20px;">Search Result</h3>
+                <div class="product-detail-card">
+                    <div class="product-detail-grid">
+                        <div class="product-image-section">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        
+                        <div class="product-form-section">
+                            <form th:action="@{/product/order}" th:object="${product}" method="post">
+                                <div style="margin-bottom: 24px;">
+                                    <span class="product-badge">Fresh & Hot</span>
+                                    <h2 class="product-title" th:text="${product.pname}">Product Name</h2>
+                                    <p class="product-desc">Experience our signature culinary masterpiece, prepared with secrets from our master chefs.</p>
+                                </div>
+
+                                <div class="product-meta">
+                                    <div>
+                                        <span class="meta-label">PRICE</span>
+                                        <div class="meta-value-price">₹<span th:text="${#numbers.formatDecimal(product.pprice, 0, 0)}">300</span></div>
+                                        <input type="hidden" name="oName" th:value="${product.pname}">
+                                        <input type="hidden" name="oPrice" th:value="${product.pprice}">
+                                    </div>
+                                    <div>
+                                        <span class="meta-label">ORDER QUANTITY</span>
+                                        <input type="number" name="oQuantity" value="1" min="1" class="input-field" style="margin-top: 4px;" required>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary" style="width: 100%; height: 50px; font-size: 1rem; border-radius: 12px;">
+                                    Confirm Order <i class="fa-solid fa-basket-shopping" style="margin-left: 8px;"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order History Section -->
+            <div th:if="${orders!=null}" class="animate-up" style="animation-delay: 0.15s;">
+                <h2 class="order-history-title">Your Recent Activity</h2>
+                <div class="table-wrapper">
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>DISH</th>
+                                <th>PRICE</th>
+                                <th>QTY</th>
+                                <th>TOTAL</th>
+                                <th>DATE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="order :${orders}">
+                                <td class="dish-name" th:text="${order.oName}">Biryani</td>
+                                <td th:text="'₹' + ${#numbers.formatDecimal(order.oPrice, 0, 0)}">₹300</td>
+                                <td th:text="${order.oQuantity}">1</td>
+                                <td class="total-amount" th:text="'₹' + ${#numbers.formatDecimal(order.totalAmmout, 0, 0)}">₹300</td>
+                                <td class="order-date" th:text="${order.orderDate}">2024-04-09</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer style="padding: 40px; text-align: center; color: var(--on-surface-variant); font-size: 0.875rem; border-top: 1px solid var(--outline); background: white;">
+        &copy; 2026 Food Fiesta. Enjoy your meal with heart.
+    </footer>
+</body>
+
+</html>
+
+</html>

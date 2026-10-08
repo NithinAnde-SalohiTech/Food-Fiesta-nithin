@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.com">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Fiesta | Culinary Excellence</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/Home.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+    <nav th:replace="~{Navigation::navbar()}"></nav>
+
+    <main>
+        <section class="hero-section">
+            <div class="container animate-up">
+                <span class="hero-tag">Premium Dining Experience</span>
+                <h1 class="hero-title">Taste the <span class="hero-gradient-text">Fiesta</span> in every single bite.</h1>
+                <p class="hero-subtitle">Elevating gourmet cuisine with hand-picked ingredients and world-class culinary craftsmanship.</p>
+                <div class="hero-actions">
+                    <a href="/products" class="btn btn-primary">Explore Menu <i class="fa-solid fa-arrow-right"></i></a>
+                    <a href="/about" class="btn btn-outline">Our Story</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="container">
+                <div class="features-header animate-up">
+                    <h2>Why Food Fiesta?</h2>
+                    <p>Discover what sets our dining experience apart.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card animate-up">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h3>Fast Delivery</h3>
+                        <p>Piping hot meals delivered to your doorstep in 30 minutes or less.</p>
+                    </div>
+                    <div class="feature-card animate-up" style="animation-delay: 0.1s;">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-leaf"></i>
+                        </div>
+                        <h3>Farm Fresh</h3>
+                        <p>100% organic ingredients sourced directly from local sustainable farms.</p>
+                    </div>
+                    <div class="feature-card animate-up" style="animation-delay: 0.2s;">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-utensils"></i>
+                        </div>
+                        <h3>Expert Chefs</h3>
+                        <p>Master chefs dedicated to creating culinary masterpieces for your palate.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer-main">
+        <div class="container footer-content">
+            <a href="/" class="nav-logo footer-logo">Food Fiesta</a>
+            <p class="footer-desc">Setting the gold standard in premium dining and doorstep delivery.</p>
+            <div class="footer-socials">
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook"></i></a>
+            </div>
+            <p class="footer-copy">&copy; 2026 Food Fiesta. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
+
+</html>

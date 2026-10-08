@@ -1,0 +1,216 @@
+.menu-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 90%;
+    padding: 140px 0 100px;
+}
+
+.menu-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.menu-header h1 {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 32px;
+}
+
+.food-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--outline);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-soft);
+    display: flex;
+    flex-direction: column;
+}
+
+.food-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
+    border-color: rgba(234, 88, 12, 0.2);
+}
+
+.image-wrapper {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    position: relative;
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.food-card:hover .image-wrapper img {
+    transform: scale(1.08);
+}
+
+.card-content {
+    padding: 24px;
+    position: relative;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.price-tag {
+    background: var(--primary);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-weight: 700;
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    box-shadow: 0 8px 16px rgba(234, 88, 12, 0.25);
+    font-size: 0.9rem;
+}
+
+.rating {
+    color: #f59e0b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.food-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 8px;
+}
+
+.food-card p {
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.buy-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--surface-variant);
+    color: var(--on-surface);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    border: 1px solid var(--outline);
+}
+
+.buy-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
+}
+
+/* Filter Section */
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 20px;
+    border-radius: 50px;
+    border: 1.5px solid var(--outline);
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--on-surface-variant);
+    transition: var(--transition);
+}
+
+.filter-btn.active, .filter-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.15);
+}
+
+/* Veg/Non-Veg Badge */
+.diet-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border: 2px solid;
+    padding: 1px;
+    border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+.diet-badge.veg {
+    border-color: #22c55e;
+}
+.diet-badge.veg::after {
+    content: '';
+    display: block;
+    width: 6px;
+    height: 6px;
+    background: #22c55e;
+    border-radius: 50%;
+}
+.diet-badge.non-veg {
+    border-color: #ef4444;
+}
+.diet-badge.non-veg::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 6px solid #ef4444;
+}
+
+/* Bestseller Badge */
+.bestseller-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #ea580c;
+    color: white;
+    font-size: 0.675rem;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    z-index: 2;
+    box-shadow: var(--shadow-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.delivery-info {
+    font-size: 0.85rem;
+    color: var(--on-surface-variant);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+}
+

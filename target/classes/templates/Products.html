@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu | Food Fiesta</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/css/Products.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+    <nav th:replace="~{Navigation::navbar()}"></nav>
+
+    <div class="menu-container">
+        <div class="menu-header animate-up">
+            <span style="color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Curation</span>
+            <h1>The <span style="color: var(--primary);">Fiesta</span> Menu</h1>
+            <p style="color: var(--on-surface-variant);">Discover a symphony of flavors crafted by experts.</p>
+        </div>
+
+        <div class="filters animate-up" style="animation-delay: 0.1s;">
+            <button class="filter-btn active" data-category="all">All Dishes</button>
+            <button class="filter-btn" data-category="Biryani">Biryani</button>
+            <button class="filter-btn" data-category="North Indian">North Indian</button>
+            <button class="filter-btn" data-category="Chinese">Chinese</button>
+            <button class="filter-btn" data-category="Desserts">Desserts</button>
+        </div>
+
+        <div class="menu-grid">
+            <!-- Dynamic loop over database products with smart fallbacks -->
+            <div th:each="product, iter : ${products}" 
+                 class="food-card animate-up" 
+                 th:data-category="${#strings.containsIgnoreCase(product.pname, 'biryani') ? 'Biryani' : 
+                                   (#strings.containsIgnoreCase(product.pname, 'paneer') || #strings.containsIgnoreCase(product.pname, 'chicken') || #strings.containsIgnoreCase(product.pname, 'chola') || #strings.containsIgnoreCase(product.pname, 'bhatura') || #strings.containsIgnoreCase(product.pname, 'paratha') ? 'North Indian' : 
+                                   (#strings.containsIgnoreCase(product.pname, 'manchurian') || #strings.containsIgnoreCase(product.pname, 'noodle') || #strings.containsIgnoreCase(product.pname, 'chowmein') || #strings.containsIgnoreCase(product.pname, 'momo') || #strings.containsIgnoreCase(product.pname, 'potato') ? 'Chinese' : 
+                                   (#strings.containsIgnoreCase(product.pname, 'jamun') || #strings.containsIgnoreCase(product.pname, 'khir') || #strings.containsIgnoreCase(product.pname, 'dessert') ? 'Desserts' : 'North Indian')))}"
+                 th:style="'animation-delay: ' + ${iter.index * 0.1} + 's;'">
+                
+                <div class="image-wrapper">
+                    <span th:if="${#strings.containsIgnoreCase(product.pname, 'hyderabadi') || #strings.containsIgnoreCase(product.pname, 'paneer') || #strings.containsIgnoreCase(product.pname, 'tikka')}" class="bestseller-badge">Bestseller</span>
+                    <img th:src="${#strings.containsIgnoreCase(product.pname, 'hyderabadi') && #strings.containsIgnoreCase(product.pname, 'biryani') ? '/Images/biryani/Biryani_of_Hyderabadi.jpg' : 
+                                  (#strings.containsIgnoreCase(product.pname, 'lucknowi') && #strings.containsIgnoreCase(product.pname, 'biryani') ? '/Images/biryani/Lucknowi-biryani.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'paneer') && #strings.containsIgnoreCase(product.pname, 'butter') ? '/Images/paneer/paneer-butter-masala.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'kadai') && #strings.containsIgnoreCase(product.pname, 'paneer') ? '/Images/paneer/Kadai-Paneer.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'butter') && #strings.containsIgnoreCase(product.pname, 'chicken') ? '/Images/chicken/butter-chicken.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'tandoori') || #strings.containsIgnoreCase(product.pname, 'tikka') ? '/Images/chicken/Tandoori-chicken-tikka.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'manchurian') ? '/Images/chinese/Fried-rice-manchurian.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'chowmein') || #strings.containsIgnoreCase(product.pname, 'noodle') ? '/Images/chinese/chowmein.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'momo') ? '/Images/chinese/momo.webp' :
+                                  (#strings.containsIgnoreCase(product.pname, 'potato') ? '/Images/north-india-food/Honey-Chilli-Potato.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'chola') ? '/Images/north-india-food/chola-bhatura.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'jamun') ? '/Images/north-india-food/Gulab Jamun.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'khir') ? '/Images/north-india-food/Khir.jpg' :
+                                  (#strings.containsIgnoreCase(product.pname, 'paratha') ? '/Images/north-india-food/Laccha-Paratha.jpg' : '/Images/istockphoto-1006271368-612x612.jpg')))))))))))))}" 
+                          th:alt="${product.pname}">
+                </div>
+                
+                <div class="card-content">
+                    <span class="price-tag" th:text="'₹' + ${#numbers.formatDecimal(product.pprice, 0, 0)}">₹350</span>
+                    <span class="rating" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 12px;">
+                        <span>
+                            <i class="fa fa-star"></i> 
+                            <span th:text="${#strings.containsIgnoreCase(product.pname, 'chicken') || #strings.containsIgnoreCase(product.pname, 'butter') ? '4.9 (150+)' : '4.8 (90+)'}">4.8 (80+)</span>
+                        </span>
+                        <span style="font-size: 0.8rem; color: var(--on-surface-variant); font-weight: 600;">
+                            <i class="fa-regular fa-clock"></i> 20-30 mins
+                        </span>
+                    </span>
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <span th:class="${#strings.containsIgnoreCase(product.pname, 'chicken') || #strings.containsIgnoreCase(product.pname, 'mutton') || #strings.containsIgnoreCase(product.pname, 'tikka')} ? 'diet-badge non-veg' : 'diet-badge veg'"></span>
+                        <h3 th:text="${product.pname}" style="margin: 0; font-size: 1.2rem; font-weight: 700;">Dish Name</h3>
+                    </div>
+                    <p th:text="${product.pdescription}">Delicious and fresh culinary craft.</p>
+                    <div style="display: flex; gap: 12px; margin-top: 16px; width: 100%;">
+                        <a th:href="${session.loggedInUser != null} ? @{/dashboard} : '#'" 
+                           th:class="${session.loggedInUser != null} ? 'buy-btn' : 'buy-btn buy-action'" 
+                           style="flex: 1; text-align: center; margin: 0; display: inline-flex; align-items: center; justify-content: center;">Order Now</a>
+                        <button th:onclick="${session.loggedInUser != null} ? 'addToCart(' + ${product.pid} + ')' : 'showLoginAlert()'" 
+                                class="btn btn-outline" 
+                                style="flex: 1; padding: 10px; font-size: 0.875rem; font-weight: 600; border-radius: var(--radius-md); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;">
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Category Filtering Logic
+        const filterBtns = document.querySelectorAll(".filter-btn");
+        const foodCards = document.querySelectorAll(".food-card");
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                // Change active button
+                filterBtns.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+
+                const category = btn.getAttribute("data-category");
+
+                // Filter cards
+                foodCards.forEach(card => {
+                    if (category === "all" || card.getAttribute("data-category") === category) {
+                        card.style.display = "flex";
+                        card.classList.add("animate-up");
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            });
+        });
+
+        // Buy Action Alert
+        document.querySelectorAll(".buy-action").forEach(button => {
+            button.addEventListener("click", function (event) {
+                event.preventDefault();
+                alert("Welcome to Food Fiesta! Please Log In as a User to place your order.");
+                window.location.href = "/login";
+            });
+        });
+
+        function addToCart(productId) {
+            fetch('/cart/add/' + productId, {
+                method: 'POST'
+            }).then(response => {
+                if (response.ok) {
+                    window.location.href = '/cart';
+                } else {
+                    window.location.href = '/login';
+                }
+            });
+        }
+
+        function showLoginAlert() {
+            alert("Welcome to Food Fiesta! Please Log In as a User to manage your cart.");
+            window.location.href = "/login";
+        }
+    </script>
+</body>
+</html>
